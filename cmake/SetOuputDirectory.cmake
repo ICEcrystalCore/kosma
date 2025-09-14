@@ -1,0 +1,15 @@
+function(set_global_output_directory OUTPUT_DIR)
+    set(_BUILD_DIR ${CMAKE_BINARY_DIR})
+    set(_REAL_OUTPUT_DIR ${_BUILD_DIR}/${OUTPUT_DIR})
+    # set the build directory
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${_REAL_OUTPUT_DIR} CACHE PATH "" FORCE)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${_REAL_OUTPUT_DIR} CACHE PATH "" FORCE)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${_REAL_OUTPUT_DIR} CACHE PATH "" FORCE)
+endfunction()
+
+function(get_mock_folder_for MODULE_NAME MOCK_FOLDER_NAME)
+    set(_MOCK_ROOT ${CMAKE_BINARY_DIR}/Mock)
+    set(_MOCK_DIR ${_MOCK_ROOT}/${MODULE_NAME})
+    file(MAKE_DIRECTORY ${_MOCK_DIR})
+    set(${MOCK_FOLDER_NAME} ${_MOCK_DIR} PARENT_SCOPE)
+endfunction()

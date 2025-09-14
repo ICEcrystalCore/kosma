@@ -1,0 +1,14 @@
+#ifndef @SNACK_MODULE_NAME@_API_H
+#define @SNACK_MODULE_NAME@_API_H
+
+#ifdef BUILDING_DLL // if we are building a shared library on Windows
+    #ifdef BUILDING_@SNACK_MODULE_NAME@ // in the building process of this library
+        #define @SNACK_MODULE_NAME@_API __declspec(dllexport)
+    #else                        // in the using process of this library
+        #define @SNACK_MODULE_NAME@_API __declspec(dllimport)
+    #endif
+#else //  not a shared library, define as empty
+    #define @SNACK_MODULE_NAME@_API
+#endif
+
+#endif
