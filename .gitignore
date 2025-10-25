@@ -7,3 +7,6 @@
 
   # vcpkg files
 /vcpkg_installed
+
+  # conan files
+/.conan

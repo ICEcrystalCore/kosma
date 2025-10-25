@@ -174,7 +174,7 @@ void String::setLength(size_t len)
 void String::updateCharCount() const
 {
     size_t newCharCount = 0;
-    for (Char ch : *this) {
+    for (auto ch : *this) {
         if (ch.isLowSurrogate())
             continue;
         newCharCount++;
@@ -283,6 +283,30 @@ String& String::operator+=(Char c)
     return *this;
 }
 
+String& String::operator+=(CChar c)
+{
+    pushBack(c);
+    return *this;
+}
+
+String& String::operator+=(U8Char c)
+{
+    pushBack(c);
+    return *this;
+}
+
+String& String::operator+=(U16Char c)
+{
+    pushBack(c);
+    return *this;
+}
+
+String& String::operator+=(U32Char c)
+{
+    pushBack(c);
+    return *this;
+}
+
 String& String::append(const String& str)
 {
     return append(str.data(), str.length());
@@ -293,6 +317,26 @@ String& String::append(const Char* s)
     return append(s, std::char_traits<Char>::length(s));
 }
 
+String& String::append(const CChar* s)
+{
+    return append(s, 1);
+}
+
+String& String::append(const U8Char* s)
+{
+    return append(s, 1);
+}
+
+String& String::append(const U16Char* s)
+{
+    return append(s, 1);
+}
+
+String& String::append(const U32Char* s)
+{
+    return append(s, 1);
+}
+
 String& String::append(const Char* s, size_t n)
 {
     size_t oldLen = length();
@@ -301,9 +345,57 @@ String& String::append(const Char* s, size_t n)
     return *this;
 }
 
+String& String::append(const CChar* s, size_t n)
+{
+    return append(reinterpret_cast<const U8Char*>(s), n);
+}
+
+String& String::append(const U8Char* s, size_t n)
+{
+    auto [u16, u16Len] = toU16({s, n});
+    size_t oldLen = length();
+    resize(oldLen + u16Len);
+    std::memcpy(getData() + oldLen, u16.get(), u16Len * sizeof(Char));
+    return *this;
+}
+
+String& String::append(const U16Char* s, size_t n)
+{
+    return append(reinterpret_cast<const Char*>(s), n);
+}
+
+String& String::append(const U32Char* s, size_t n)
+{
+    auto [u16, u16Len] = toU16({s, n});
+    size_t oldLen = length();
+    resize(oldLen + u16Len);
+    std::memcpy(getData() + oldLen, u16.get(), u16Len * sizeof(Char));
+    return *this;
+}
+
 void String::pushBack(Char c)
 {
-    append(&c, 1);
+    append(&c);
+}
+
+void String::pushBack(CChar c)
+{
+    append(&c);
+}
+
+void String::pushBack(U8Char c)
+{
+    append(&c);
+}
+
+void String::pushBack(U16Char c)
+{
+    append(&c);
+}
+
+void String::pushBack(U32Char c)
+{
+    append(&c);
 }
 
 void String::popBack()
@@ -322,6 +414,26 @@ String& String::insert(size_t pos, const Char* s)
     return insert(pos, s, std::char_traits<Char>::length(s));
 }
 
+String& String::insert(size_t pos, const CChar* s)
+{
+    return insert(pos, s, std::char_traits<CChar>::length(s));
+}
+
+String& String::insert(size_t pos, const U8Char* s)
+{
+    return insert(pos, s, std::char_traits<U8Char>::length(s));
+}
+
+String& String::insert(size_t pos, const U16Char* s)
+{
+    return insert(pos, s, std::char_traits<U16Char>::length(s));
+}
+
+String& String::insert(size_t pos, const U32Char* s)
+{
+    return insert(pos, s, std::char_traits<U32Char>::length(s));
+}
+
 String& String::insert(size_t pos, const Char* s, size_t n)
 {
     if (pos > length())
@@ -330,6 +442,40 @@ String& String::insert(size_t pos, const Char* s, size_t n)
     resize(oldLen + n);
     std::memmove(getData() + pos + n, getData() + pos, (oldLen - pos) * sizeof(Char));
     std::memcpy(getData() + pos, s, n * sizeof(Char));
+    return *this;
+}
+
+String& String::insert(size_t pos, const CChar* s, size_t n)
+{
+    return insert(pos, reinterpret_cast<const U8Char*>(s), n);
+}
+
+String& String::insert(size_t pos, const U8Char* s, size_t n)
+{
+    if (pos > length())
+        throw std::out_of_range("String::insert");
+    auto [u16, u16Len] = toU16({s, n});
+    size_t oldLen = length();
+    resize(oldLen + n);
+    std::memmove(getData() + pos + u16Len, getData() + pos, (oldLen - pos) * sizeof(Char));
+    std::memcpy(getData() + pos, u16.get(), u16Len * sizeof(Char));
+    return *this;
+}
+
+String& String::insert(size_t pos, const U16Char* s, size_t n)
+{
+    return insert(pos, reinterpret_cast<const Char*>(s), n);
+}
+
+String& String::insert(size_t pos, const U32Char* s, size_t n)
+{
+    if (pos > length())
+        throw std::out_of_range("String::insert");
+    auto [u16, u16Len] = toU16({s, n});
+    size_t oldLen = length();
+    resize(oldLen + u16Len);
+    std::memmove(getData() + pos + u16Len, getData() + pos, (oldLen - pos) * sizeof(Char));
+    std::memcpy(getData() + pos, u16.get(), u16Len * sizeof(Char));
     return *this;
 }
 
@@ -374,6 +520,11 @@ void String::resize(size_t n, Char c)
         std::fill(getData() + length(), getData() + n, c);
         setLength(n);
     }
+}
+
+void String::resize(size_t n, CChar c)
+{
+    resize(n, Char(c));
 }
 
 void String::reserve(size_t new_cap)
@@ -511,11 +662,9 @@ bool String::operator>=(const String& rhs) const noexcept
     return compare(rhs) >= 0;
 }
 
-String operator+(const String& lhs, const String& rhs)
+StringView String::toView() const
 {
-    String tmp(lhs);
-    tmp += rhs;
-    return tmp;
+    return {getData(), length()};
 }
 
 }

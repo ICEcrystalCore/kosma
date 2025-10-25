@@ -8,7 +8,7 @@ include(cmake/LoadCMakeScripts.cmake)
 
 load_all_cmake_scripts()
 
-init_vcpkg_env()
+run_conan_install()
 
 project(Kosma)
 

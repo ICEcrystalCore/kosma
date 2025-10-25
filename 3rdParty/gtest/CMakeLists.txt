@@ -1,5 +1,5 @@
-make_vcpkg_target(KsGTest)
+make_3rd_party_target(KsGTest)
 
-add_vcpkg_pack_for(KsGTest GTest)
+add_3rd_party_pack_for(KsGTest GTest)
 
-add_vcpkg_libraries_for(KsGTest GTest::GTest GTest::Main)
+add_3rd_party_libraries_for(KsGTest gtest::gtest)

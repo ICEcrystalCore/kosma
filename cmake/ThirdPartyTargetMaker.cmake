@@ -1,11 +1,10 @@
-function(make_vcpkg_target TARGET_NAME)
-    # Ensure target_name is not already created
+function(make_3rd_party_target TARGET_NAME)
     if (NOT TARGET ${TARGET_NAME})
         add_library(${TARGET_NAME} INTERFACE)
     endif ()
 endfunction()
 
-function(add_vcpkg_pack_for TARGET_NAME PACK_NAME)
+function(add_3rd_party_pack_for TARGET_NAME PACK_NAME)
     if (ARGC GREATER 2)
         set(COMPONENTS "")
         # find all components name from the rest of the arguments
@@ -18,7 +17,7 @@ function(add_vcpkg_pack_for TARGET_NAME PACK_NAME)
     endif ()
 endfunction()
 
-function(add_vcpkg_libraries_for TARGET_NAME)
+function(add_3rd_party_libraries_for TARGET_NAME)
     if (NOT TARGET ${TARGET_NAME})
         return()
     endif ()

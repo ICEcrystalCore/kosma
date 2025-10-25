@@ -1,5 +1,5 @@
-make_vcpkg_target(KsICU)
+make_3rd_party_target(KsICU)
 
-add_vcpkg_pack_for(KsICU ICU uc data)
+add_3rd_party_pack_for(KsICU ICU uc data)
 
-add_vcpkg_libraries_for(KsICU ICU::uc ICU::data)
+add_3rd_party_libraries_for(KsICU ICU::uc ICU::data)

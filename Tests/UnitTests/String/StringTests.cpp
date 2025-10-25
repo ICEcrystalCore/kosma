@@ -84,7 +84,7 @@ TEST(StringTest, Modifiers)
     EXPECT_EQ(s, String("abcdefg", 7));
     s.popBack();
     EXPECT_EQ(s, String("abcdef", 6));
-    s.insert(3, (Char*)u"123", 3);
+    s.insert(3, "123", 3);
     EXPECT_EQ(s, String("abc123def", 9));
     s.erase(3, 3);
     EXPECT_EQ(s, String("abcdef", 6));

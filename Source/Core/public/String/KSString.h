@@ -13,11 +13,13 @@ namespace Kosma::Core {
 
 class KS_CORE_API String {
 public:
-    // Iterator types
-    using iterator = Char*;
-    using const_iterator = const Char*;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using Iterator = Char*;
+
+    using ConstIterator = const Char*;
+
+    using ReverseIterator = std::reverse_iterator<Iterator>;
+
+    using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
 
     static constexpr size_t kNotFound = static_cast<size_t>(-1);
 
@@ -92,29 +94,29 @@ public:
 
     void shrinkToFit();
 
-    iterator begin() { return getData(); }
+    Iterator begin() { return getData(); }
 
-    const_iterator begin() const { return getData(); }
+    Iterator end() { return getData() + length(); }
 
-    const_iterator cbegin() const { return getData(); }
+    ConstIterator begin() const { return getData(); }
 
-    iterator end() { return getData() + length(); }
+    ConstIterator end() const { return getData() + length(); }
 
-    const_iterator end() const { return getData() + length(); }
+    ConstIterator cbegin() const { return getData(); }
 
-    const_iterator cend() const { return getData() + length(); }
+    ConstIterator cend() const { return getData() + length(); }
 
-    reverse_iterator rbegin() { return reverse_iterator(end()); }
+    ReverseIterator rbegin() { return ReverseIterator(end()); }
 
-    const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+    ReverseIterator rend() { return ReverseIterator(begin()); }
 
-    const_reverse_iterator crbegin() const { return const_reverse_iterator(cend()); }
+    ConstReverseIterator rbegin() const { return ConstReverseIterator(end()); }
 
-    reverse_iterator rend() { return reverse_iterator(begin()); }
+    ConstReverseIterator rend() const { return ConstReverseIterator(begin()); }
 
-    const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
+    ConstReverseIterator crbegin() const { return ConstReverseIterator(end()); }
 
-    const_reverse_iterator crend() const { return const_reverse_iterator(cbegin()); }
+    ConstReverseIterator crend() const { return ConstReverseIterator(begin()); }
 
     Char& operator[](size_t pos);
 
@@ -136,13 +138,45 @@ public:
 
     String& operator+=(Char c);
 
+    String& operator+=(CChar c);
+
+    String& operator+=(U8Char c);
+
+    String& operator+=(U16Char c);
+
+    String& operator+=(U32Char c);
+
     String& append(const String& str);
 
     String& append(const Char* s);
 
+    String& append(const CChar* s);
+
+    String& append(const U8Char* s);
+
+    String& append(const U16Char* s);
+
+    String& append(const U32Char* s);
+
     String& append(const Char* s, size_t n);
 
+    String& append(const CChar* s, size_t n);
+
+    String& append(const U8Char* s, size_t n);
+
+    String& append(const U16Char* s, size_t n);
+
+    String& append(const U32Char* s, size_t n);
+
     void pushBack(Char c);
+
+    void pushBack(CChar c);
+
+    void pushBack(U8Char c);
+
+    void pushBack(U16Char c);
+
+    void pushBack(U32Char c);
 
     void popBack();
 
@@ -150,7 +184,23 @@ public:
 
     String& insert(size_t pos, const Char* s);
 
+    String& insert(size_t pos, const CChar* s);
+
+    String& insert(size_t pos, const U8Char* s);
+
+    String& insert(size_t pos, const U16Char* s);
+
+    String& insert(size_t pos, const U32Char* s);
+
     String& insert(size_t pos, const Char* s, size_t n);
+
+    String& insert(size_t pos, const CChar* s, size_t n);
+
+    String& insert(size_t pos, const U8Char* s, size_t n);
+
+    String& insert(size_t pos, const U16Char* s, size_t n);
+
+    String& insert(size_t pos, const U32Char* s, size_t n);
 
     String& erase(size_t pos = 0, size_t len = kNotFound);
 
@@ -161,6 +211,8 @@ public:
     void resize(size_t n);
 
     void resize(size_t n, Char c);
+
+    void resize(size_t n, CChar c);
 
     void reserve(size_t new_cap);
 
@@ -201,6 +253,8 @@ public:
     bool operator<=(const String& rhs) const noexcept;
 
     bool operator>=(const String& rhs) const noexcept;
+
+    StringView toView() const;
 
 protected:
     static constexpr size_t kBufferSize = 11;  // SSO buffer size
@@ -262,7 +316,10 @@ private:
     } mutable charCount_ {0, 1};
 };
 
-KS_CORE_API String operator+(const String& lhs, const String& rhs);
+inline String operator+(const String& lhs, const String& rhs)
+{
+    return String(lhs).append(rhs);
+}
 
 }
 
