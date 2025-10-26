@@ -1,12 +1,15 @@
-# Ignore IDE
+# ignore DS_Store
+.DS_Store
+
+# ignore IDE
 /.idea
 
-  # build files
+# build files
 /cmake-*
 /build
 
-  # vcpkg files
+# vcpkg files
 /vcpkg_installed
 
-  # conan files
+# conan files
 /.conan
