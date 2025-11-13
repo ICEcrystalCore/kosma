@@ -6,7 +6,13 @@
 
 namespace Kosma {
 
-Editor::Editor(int argc, char** argv): Application(argc, argv)
+Editor::Editor(int argc, char** argv)
+    : Application(argc, argv)
+{
+}
+
+Editor::Editor(int argc, wchar_t** argv)
+    : Application(argc, argv)
 {
 }
 

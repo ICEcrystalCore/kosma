@@ -50,14 +50,31 @@ function(init_env_vars)
         set(IS_RELEASE TRUE CACHE BOOL "Is Release")
     endif ()
 
+    _init_env_defines()
 endfunction()
 
 function(reset_env_vars)
     # get global variants name start with is_
     get_cmake_property(GLOBAL_VAR_LIST CACHE_VARIABLES)
     foreach (GLOBAL_VAR ${GLOBAL_VAR_LIST})
-        if (GLOBAL_VAR MATCHES "^is_")
+        if (GLOBAL_VAR MATCHES "^IS_")
             unset(${GLOBAL_VAR} CACHE)
+        endif ()
+    endforeach ()
+endfunction()
+
+# --- Private ---
+
+function(_init_env_defines)
+    get_cmake_property(GLOBAL_VAR_LIST CACHE_VARIABLES)
+    foreach (GLOBAL_VAR ${GLOBAL_VAR_LIST})
+        if (NOT GLOBAL_VAR MATCHES "^IS_")
+            continue()
+        endif ()
+
+        get_property(VAR_VALUE CACHE ${GLOBAL_VAR} PROPERTY VALUE)
+        if (VAR_VALUE)
+            add_compile_definitions(${GLOBAL_VAR})
         endif ()
     endforeach ()
 endfunction()

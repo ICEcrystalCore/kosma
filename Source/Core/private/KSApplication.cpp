@@ -23,6 +23,11 @@ Application::Application(int argc, wchar_t** argv)
 
 Application::~Application() = default;
 
+const AppArguments& Application::arguments() const
+{
+    return m_impl->arguments();
+}
+
 void Application::run()
 {
     initialize();

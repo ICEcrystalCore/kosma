@@ -5,6 +5,7 @@
 #ifndef KOSMA_KSAPPLICATION_H
 #define KOSMA_KSAPPLICATION_H
 
+#include "KSAppArguments.h"
 #include "KsCoreAPI.h"
 #include "Memory/KSUniquePtr.h"
 
@@ -27,6 +28,8 @@ public:
     virtual void update() = 0;
 
     virtual void shutdown() = 0;
+
+    const AppArguments& arguments() const;
 
     void run();
 

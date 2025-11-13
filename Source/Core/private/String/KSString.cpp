@@ -5,6 +5,7 @@
 #include "String/KSString.h"
 
 #include "String/Codec/KSCharsetCodec.h"
+#include "String/KSStringUtils.h"
 
 namespace Kosma::Core {
 
@@ -19,32 +20,32 @@ static size_t calcHeapSize(size_t len)
 }
 
 String::String(const Char* str)
-    : String(str, str ? std::char_traits<Char>::length(str) : 0)
+    : String(str, getLengthOf(str))
 {
 }
 
 String::String(const CChar* str)
-    : String(str, str ? std::char_traits<CChar>::length(str) : 0)
+    : String(str, getLengthOf(str))
 {
 }
 
 String::String(const U8Char* str)
-    : String(str, str ? std::char_traits<U8Char>::length(str) : 0)
+    : String(str, getLengthOf(str))
 {
 }
 
 String::String(const U16Char* str)
-    : String(str, str ? std::char_traits<U16Char>::length(str) : 0)
+    : String(str, getLengthOf(str))
 {
 }
 
 String::String(const U32Char* str)
-    : String(str, str ? std::char_traits<U32Char>::length(str) : 0)
+    : String(str, getLengthOf(str))
 {
 }
 
 String::String(const WChar* str)
-    : String(str, str ? std::char_traits<WChar>::length(str) : 0)
+    : String(str, getLengthOf(str))
 {
 }
 
@@ -104,11 +105,11 @@ String::String(const WChar* begin, size_t len)
 String::String(const String& other)
 {
     // copy first
-    std::memcpy(&heap, &other.heap, sizeof(heap));
+    std::memcpy(&m_heap, &other.m_heap, sizeof(m_heap));
     // copy heap data if needed
     if (isHeapMode()) {
-        heap.data = new Char[heap.capacity + 1];
-        std::memcpy(heap.data, other.heap.data, heap.length * sizeof(Char));
+        m_heap.data = new Char[m_heap.capacity + 1];
+        std::memcpy(m_heap.data, other.m_heap.data, m_heap.length * sizeof(Char));
     }
 }
 
@@ -120,7 +121,7 @@ String::String(String&& other) noexcept
 String::~String()
 {
     if (isHeapMode())
-        delete[] heap.data;
+        delete[] m_heap.data;
 }
 
 bool String::isEmpty() const
@@ -141,19 +142,19 @@ void String::swap(String& other) noexcept
 
 size_t String::length() const
 {
-    return isHeapMode() ? heap.length : sso.size;
+    return isHeapMode() ? m_heap.length : m_sso.size;
 }
 
 size_t String::charCount() const
 {
     if (isCharCountDirty())
         updateCharCount();
-    return charCount_.count;
+    return m_charCount.count;
 }
 
 size_t String::capacity() const
 {
-    return isHeapMode() ? heap.capacity : capacityOfSSO();
+    return isHeapMode() ? m_heap.capacity : capacityOfSSO();
 }
 
 void String::shrinkToFit()
@@ -179,14 +180,14 @@ void String::updateCharCount() const
             continue;
         newCharCount++;
     }
-    charCount_.count = newCharCount;
+    m_charCount.count = newCharCount;
     clearCharCountDirty();
 }
 
 void String::swapWith(String& other)
 {
-    std::swap(heap, other.heap);
-    std::swap(charCount_, other.charCount_);
+    std::swap(m_heap, other.m_heap);
+    std::swap(m_charCount, other.m_charCount);
 }
 
 Char* String::initSpaceFor(size_t len)
@@ -219,12 +220,12 @@ void String::reallocateHeapFor(size_t size, bool keepContent)
     }
 
     if (isHeapMode())
-        delete[] heap.data;
+        delete[] m_heap.data;
 
-    heap.data = newHeap;
-    heap.capacity = newCapacity;
-    heap.length = newLen;
-    heap.isLong = 1;
+    m_heap.data = newHeap;
+    m_heap.capacity = newCapacity;
+    m_heap.length = newLen;
+    m_heap.isLong = 1;
 }
 
 // Element access
@@ -314,7 +315,7 @@ String& String::append(const String& str)
 
 String& String::append(const Char* s)
 {
-    return append(s, std::char_traits<Char>::length(s));
+    return append(s, getLengthOf(s));
 }
 
 String& String::append(const CChar* s)
@@ -411,27 +412,27 @@ String& String::insert(size_t pos, const String& str)
 
 String& String::insert(size_t pos, const Char* s)
 {
-    return insert(pos, s, std::char_traits<Char>::length(s));
+    return insert(pos, s, getLengthOf(s));
 }
 
 String& String::insert(size_t pos, const CChar* s)
 {
-    return insert(pos, s, std::char_traits<CChar>::length(s));
+    return insert(pos, s, getLengthOf(s));
 }
 
 String& String::insert(size_t pos, const U8Char* s)
 {
-    return insert(pos, s, std::char_traits<U8Char>::length(s));
+    return insert(pos, s, getLengthOf(s));
 }
 
 String& String::insert(size_t pos, const U16Char* s)
 {
-    return insert(pos, s, std::char_traits<U16Char>::length(s));
+    return insert(pos, s, getLengthOf(s));
 }
 
 String& String::insert(size_t pos, const U32Char* s)
 {
-    return insert(pos, s, std::char_traits<U32Char>::length(s));
+    return insert(pos, s, getLengthOf(s));
 }
 
 String& String::insert(size_t pos, const Char* s, size_t n)
@@ -533,46 +534,28 @@ void String::reserve(size_t new_cap)
         reallocateHeapFor(new_cap, true);
 }
 
-int String::compare(const String& str) const noexcept
+int String::compare(const String& other) const noexcept
 {
-    size_t minLen = std::min(length(), str.length());
-    int cmp = std::char_traits<Char>::compare(getData(), str.getData(), minLen);
-    if (cmp != 0)
-        return cmp;
-    if (length() < str.length())
-        return -1;
-    if (length() > str.length())
-        return 1;
-    return 0;
+    return compareBetween(getData(), length(), other.getData(), other.length());
 }
 
-int String::compare(const Char* s) const noexcept
+int String::compare(const Char* other) const noexcept
 {
-    size_t slen = std::char_traits<Char>::length(s);
-    size_t minLen = std::min(length(), slen);
-    int cmp = std::char_traits<Char>::compare(getData(), s, minLen);
-    if (cmp != 0)
-        return cmp;
-    if (length() < slen)
-        return -1;
-    if (length() > slen)
-        return 1;
-    return 0;
+    return compareBetween(getData(), length(), other, getLengthOf(other));
 }
 
 bool String::startsWith(const String& str) const noexcept
 {
-    return length() >= str.length()
-           && std::char_traits<Char>::compare(getData(), str.getData(), str.length()) == 0;
+    if (length() < str.length())
+        return false;
+    return 0 == compareBetween(getData(), str.length(), str.getData(), str.length());
 }
 
 bool String::endsWith(const String& str) const noexcept
 {
-    return length() >= str.length()
-           && std::char_traits<Char>::compare(getData() + length() - str.length(),
-                                              str.getData(),
-                                              str.length())
-                  == 0;
+    if (length() < str.length())
+        return false;
+    return 0 == compareBetween(end() - str.length(), str.length(), str.getData(), str.length());
 }
 
 bool String::contains(const String& str) const noexcept
@@ -585,7 +568,7 @@ size_t String::find(const String& str, size_t pos) const noexcept
     if (str.length() == 0 || str.length() > length() || pos > length() - str.length())
         return kNotFound;
     for (size_t i = pos; i <= length() - str.length(); ++i) {
-        if (std::char_traits<Char>::compare(getData() + i, str.getData(), str.length()) == 0)
+        if (!compareBetween(getData() + i, str.length(), str.getData(), str.length()))
             return i;
     }
     return kNotFound;
@@ -602,7 +585,7 @@ size_t String::rfind(const String& str, size_t pos) const noexcept
         return kNotFound;
     size_t end = std::min(pos, length() - str.length());
     for (size_t i = end + 1; i-- > 0;) {
-        if (std::char_traits<Char>::compare(getData() + i, str.getData(), str.length()) == 0)
+        if (!compareBetween(getData() + i, str.length(), str.getData(), str.length()))
             return i;
     }
     return kNotFound;

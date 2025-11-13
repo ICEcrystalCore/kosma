@@ -1,4 +1,4 @@
-function(scann_all_third_party_targets DIR)
+function(scan_all_third_party_targets DIR)
     # find all CMakeLists.txt files under the specified directory and its subdirectories
     file(GLOB_RECURSE CMAKE_FILES ${DIR}/*/CMakeLists.txt)
 

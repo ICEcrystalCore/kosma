@@ -74,6 +74,7 @@ To<U16Char> toU16(const From<WChar>& w)
 {
     if constexpr (2 == kWcharSize) {
         auto destBuffer = new U16Char[w.length];
+        std::memcpy(destBuffer, w.data, w.length * sizeof(U16Char));
         To<U16Char> u16 = {destBuffer, w.length};
         return u16;
     } else {

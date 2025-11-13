@@ -31,11 +31,18 @@ function(run_conan_install)
 
     set(CONAN_BUILD_DIR ${CMAKE_BINARY_DIR}/conan_build)
 
+    if (DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(_CONAN_BUILD_TYPE Debug)
+    else ()
+        set(_CONAN_BUILD_TYPE Release)
+    endif ()
+
     execute_process(
             COMMAND ${CONAN_CMD} install ${CMAKE_SOURCE_DIR}
             --output-folder=${CONAN_BUILD_DIR}
             --build=missing
             -s compiler.cppstd=20
+            -s build_type=${_CONAN_BUILD_TYPE}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             RESULT_VARIABLE CONAN_INSTALL_RESULT
     )

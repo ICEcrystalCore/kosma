@@ -21,16 +21,25 @@ UniquePtr<Application::Impl> Application::Impl::make(int argc, wchar_t** argv)
     return makeUnique<Impl>(argc, argv);
 }
 
-Application::Impl::Impl()
-{
-}
+Application::Impl::Impl() = default;
 
 Application::Impl::Impl(int argc, char** argv)
 {
+    for (int i = 0; i < argc; ++i) {
+        m_arguments.append(argv[i]);
+    }
 }
 
 Application::Impl::Impl(int argc, wchar_t** argv)
 {
+    for (int i = 0; i < argc; ++i) {
+        m_arguments.append(argv[i]);
+    }
+}
+
+const AppArguments& Application::Impl::arguments() const
+{
+    return m_arguments;
 }
 
 }

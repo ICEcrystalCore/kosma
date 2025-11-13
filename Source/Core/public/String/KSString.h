@@ -216,9 +216,9 @@ public:
 
     void reserve(size_t new_cap);
 
-    int compare(const String& str) const noexcept;
+    int compare(const String& other) const noexcept;
 
-    int compare(const Char* s) const noexcept;
+    int compare(const Char* other) const noexcept;
 
     bool startsWith(const String& str) const noexcept;
 
@@ -263,19 +263,19 @@ protected:
 
     static constexpr bool needHeapStorage(size_t len) { return len > capacityOfSSO(); }
 
-    bool isSSOMode() const { return !sso.isLong; }
+    bool isSSOMode() const { return !m_sso.isLong; }
 
-    bool isHeapMode() const { return heap.isLong; }
+    bool isHeapMode() const { return m_heap.isLong; }
 
-    bool isCharCountDirty() const { return charCount_.isDirty; }
+    bool isCharCountDirty() const { return m_charCount.isDirty; }
 
-    void setCharCountDirty() const { charCount_.isDirty = 1; }
+    void setCharCountDirty() const { m_charCount.isDirty = 1; }
 
-    void clearCharCountDirty() const { charCount_.isDirty = 0; }
+    void clearCharCountDirty() const { m_charCount.isDirty = 0; }
 
-    void setHeapLength(size_t len) { heap.length = len; }
+    void setHeapLength(size_t len) { m_heap.length = len; }
 
-    void setSSOLength(size_t len) { sso.size = static_cast<uint8_t>(len); }
+    void setSSOLength(size_t len) { m_sso.size = static_cast<uint8_t>(len); }
 
     void setLength(size_t len);
 
@@ -283,7 +283,7 @@ protected:
 
     void swapWith(String& other);
 
-    const Char* getData() const { return isHeapMode() ? heap.data : sso.buffer; }
+    const Char* getData() const { return isHeapMode() ? m_heap.data : m_sso.buffer; }
 
     Char* getData() { return const_cast<Char*>(std::as_const(*this).getData()); }
 
@@ -300,20 +300,20 @@ private:
             size_t length;
             size_t capacity : 63;
             size_t isLong : 1;
-        } heap;
+        } m_heap;
 
         struct {                       // SSO 短字符串
             Char buffer[kBufferSize];  // 存储短字符串
             uint8_t padding;
             uint8_t size : 7;
             uint8_t isLong : 1;
-        } sso {};
+        } m_sso {};
     };
 
     struct CharCount {
         size_t count : 63;
         size_t isDirty : 1;
-    } mutable charCount_ {0, 1};
+    } mutable m_charCount {0, 1};
 };
 
 inline String operator+(const String& lhs, const String& rhs)

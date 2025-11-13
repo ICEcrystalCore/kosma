@@ -6,6 +6,7 @@
 #define KOSMA_KSAPPLICATIONIMPL_H
 
 #include "KSApplication.h"
+#include "KSRealAppArguments.h"
 #include "String/KSString.h"
 
 namespace Kosma::Core {
@@ -24,8 +25,10 @@ public:
 
     Impl(int argc, wchar_t** argv);
 
+    const AppArguments& arguments() const;
+
 private:
-    String m_args;
+    RealAppArguments m_arguments;
 };
 
 }

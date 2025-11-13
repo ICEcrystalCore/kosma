@@ -13,6 +13,8 @@ class Editor : public Core::Application {
 public:
     Editor(int argc, char** argv);
 
+    Editor(int argc, wchar_t** argv);
+
     void initialize() override;
 
     bool isRunning() const override;

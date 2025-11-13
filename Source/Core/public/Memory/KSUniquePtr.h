@@ -44,11 +44,17 @@ public:
         return *this;
     }
 
-    T& operator*() const noexcept { return *m_ptr; }
+    const T& operator*() const noexcept { return *m_ptr.second(); }
 
-    T* operator->() const noexcept { return m_ptr; }
+    T& operator*() noexcept { return *m_ptr.second(); }
 
-    T* get() const noexcept { return m_ptr; }
+    const T* operator->() const noexcept { return m_ptr.second(); }
+
+    T* operator->() noexcept { return m_ptr.second(); }
+
+    const T* get() const noexcept { return m_ptr.second(); }
+
+    T* get() noexcept { return m_ptr; }
 
     T* release() noexcept
     {

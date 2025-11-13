@@ -1,69 +1,64 @@
 #include "String/KSStringView.h"
 
 #include <algorithm>
-#include <cstring>
 #include <stdexcept>
 
 #include "String/KSString.h"
+#include "String/KSStringUtils.h"
 
 namespace Kosma::Core {
 
 StringView::StringView(const String& str)
-    : data_(str.data())
-    , size_(str.length())
+    : m_data(str.data())
+    , m_size(str.length())
 {
 }
 
 int StringView::compare(const StringView& other) const noexcept
 {
-    size_t minLen = std::min(size_, other.size_);
-    int cmp = std::char_traits<Char>::compare(data_, other.data_, minLen);
-    if (cmp != 0)
-        return cmp;
-    if (size_ < other.size_)
-        return -1;
-    if (size_ > other.size_)
-        return 1;
-    return 0;
+    return compareBetween(m_data, m_size, other.m_data, other.m_size);
 }
 
 bool StringView::starts_with(const StringView& sv) const noexcept
 {
-    return size_ >= sv.size_ && std::char_traits<Char>::compare(data_, sv.data_, sv.size_) == 0;
+    if (m_size < sv.m_size)
+        return false;
+    return 0 == compareBetween(m_data, sv.m_size, sv.m_data, sv.m_size);
 }
 
 bool StringView::ends_with(const StringView& sv) const noexcept
 {
-    return size_ >= sv.size_
-           && std::char_traits<Char>::compare(data_ + size_ - sv.size_, sv.data_, sv.size_) == 0;
+    if (m_size < sv.m_size)
+        return false;
+    return 0 == compareBetween(m_data + (m_size - sv.m_size), sv.m_size, sv.m_data, sv.m_size);
 }
 
 bool StringView::contains(const StringView& sv) const noexcept
 {
-    return find(sv) != npos;
+    return find(sv) != kNotFound;
 }
 
 size_t StringView::find(const StringView& sv, size_t pos) const noexcept
 {
-    if (sv.size_ == 0 || sv.size_ > size_ || pos > size_ - sv.size_)
-        return npos;
-    for (size_t i = pos; i <= size_ - sv.size_; ++i) {
-        if (std::char_traits<Char>::compare(data_ + i, sv.data_, sv.size_) == 0)
+    if (sv.m_size == 0 || sv.m_size > m_size || pos > m_size - sv.m_size)
+        return kNotFound;
+    for (size_t i = pos; i <= m_size - sv.m_size; ++i) {
+        if (0 == compareBetween(m_data + i, sv.m_size, sv.m_data, sv.m_size))
             return i;
     }
-    return npos;
+    return kNotFound;
 }
 
 size_t StringView::rfind(const StringView& sv, size_t pos) const noexcept
 {
-    if (sv.size_ == 0 || sv.size_ > size_)
-        return npos;
-    size_t end = std::min(pos, size_ - sv.size_);
+    if (sv.m_size == 0 || sv.m_size > m_size)
+        return kNotFound;
+    size_t end = std::min(pos, m_size - sv.m_size);
     for (size_t i = end + 1; i-- > 0;) {
-        if (std::char_traits<Char>::compare(data_ + i, sv.data_, sv.size_) == 0)
+        if (0 == compareBetween(m_data + i, sv.m_size, sv.m_data, sv.m_size))
             return i;
     }
-    return npos;
+    return kNotFound;
 }
 
 bool StringView::operator==(const StringView& rhs) const noexcept
@@ -98,7 +93,7 @@ bool StringView::operator>=(const StringView& rhs) const noexcept
 
 String StringView::to_string() const
 {
-    return {data_, size_};
+    return {m_data, m_size};
 }
 
 }  // namespace Kosma::Core

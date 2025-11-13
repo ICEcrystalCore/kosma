@@ -1,6 +1,6 @@
 function(init_unit_tests)
     _make_all_in_one_test()
-    scann_all_third_party_targets(.)
+    scan_all_third_party_targets(.)
 endfunction()
 
 function(make_simple_test TEST_NAME)

@@ -24,35 +24,37 @@ public:
     using reverse_iterator = const_reverse_iterator;
     using size_type = size_t;
 
+    static constexpr size_t kNotFound = static_cast<size_t>(-1);
+
     StringView() noexcept
-        : data_(nullptr)
-        , size_(0)
+        : m_data(nullptr)
+        , m_size(0)
     {
     }
 
     StringView(const Char* data, size_t size)
-        : data_(data)
-        , size_(size)
+        : m_data(data)
+        , m_size(size)
     {
     }
 
     StringView(const String& str);
 
-    const Char* data() const noexcept { return data_; }
+    const Char* data() const noexcept { return m_data; }
 
-    size_t size() const noexcept { return size_; }
+    size_t size() const noexcept { return m_size; }
 
-    size_t length() const noexcept { return size_; }
+    size_t length() const noexcept { return m_size; }
 
-    bool empty() const noexcept { return size_ == 0; }
+    bool empty() const noexcept { return m_size == 0; }
 
-    const_iterator begin() const noexcept { return data_; }
+    const_iterator begin() const noexcept { return m_data; }
 
-    const_iterator end() const noexcept { return data_ + size_; }
+    const_iterator end() const noexcept { return m_data + m_size; }
 
-    const_iterator cbegin() const noexcept { return data_; }
+    const_iterator cbegin() const noexcept { return m_data; }
 
-    const_iterator cend() const noexcept { return data_ + size_; }
+    const_iterator cend() const noexcept { return m_data + m_size; }
 
     const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
 
@@ -62,59 +64,68 @@ public:
 
     const_reverse_iterator crend() const noexcept { return const_reverse_iterator(cbegin()); }
 
-    const Char& operator[](size_t pos) const { return data_[pos]; }
+    const Char& operator[](size_t pos) const { return m_data[pos]; }
 
     const Char& at(size_t pos) const
     {
-        if (pos >= size_)
+        if (pos >= m_size)
             throw std::out_of_range("StringView::at");
-        return data_[pos];
+        return m_data[pos];
     }
 
     void remove_prefix(size_t n)
     {
-        if (n > size_)
-            n = size_;
-        data_ += n;
-        size_ -= n;
+        if (n > m_size)
+            n = m_size;
+        m_data += n;
+        m_size -= n;
     }
 
     void remove_suffix(size_t n)
     {
-        if (n > size_)
-            n = size_;
-        size_ -= n;
+        if (n > m_size)
+            n = m_size;
+        m_size -= n;
     }
 
-    StringView substr(size_t pos, size_t n = npos) const
+    StringView substr(size_t pos, size_t n = kNotFound) const
     {
-        if (pos > size_)
+        if (pos > m_size)
             throw std::out_of_range("StringView::substr");
-        if (n == npos || pos + n > size_)
-            n = size_ - pos;
-        return {data_ + pos, n};
+        if (n == kNotFound || pos + n > m_size)
+            n = m_size - pos;
+        return {m_data + pos, n};
     }
 
     int compare(const StringView& other) const noexcept;
+
     bool starts_with(const StringView& sv) const noexcept;
+
     bool ends_with(const StringView& sv) const noexcept;
+
     bool contains(const StringView& sv) const noexcept;
+
     size_t find(const StringView& sv, size_t pos = 0) const noexcept;
-    size_t rfind(const StringView& sv, size_t pos = npos) const noexcept;
+
+    size_t rfind(const StringView& sv, size_t pos = kNotFound) const noexcept;
 
     bool operator==(const StringView& rhs) const noexcept;
+
     bool operator!=(const StringView& rhs) const noexcept;
+
     bool operator<(const StringView& rhs) const noexcept;
+
     bool operator>(const StringView& rhs) const noexcept;
+
     bool operator<=(const StringView& rhs) const noexcept;
+
     bool operator>=(const StringView& rhs) const noexcept;
 
     String to_string() const;
-    static constexpr size_t npos = static_cast<size_t>(-1);
 
 private:
-    const Char* data_;
-    size_t size_;
+    const Char* m_data;
+    size_t m_size;
 };
 
 }
