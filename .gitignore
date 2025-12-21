@@ -3,6 +3,10 @@
 
 # ignore IDE
 /.idea
+/.vscode
+
+# ignore cache
+/.cache
 
 # build files
 /cmake-*

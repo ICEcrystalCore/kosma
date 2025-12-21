@@ -28,6 +28,7 @@ public:
     size_t countOption(const String& name) const override;
 
 private:
+    Vector<String> m_rawOptions;
 };
 
 }

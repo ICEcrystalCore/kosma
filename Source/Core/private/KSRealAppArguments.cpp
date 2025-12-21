@@ -8,6 +8,9 @@ namespace Kosma::Core {
 
 void RealAppArguments::append(const String& arg)
 {
+    auto view = arg.toView();
+    // arg.
+    m_rawOptions.emplace_back(arg);
     auto debug = true;
 }
 

@@ -22,6 +22,9 @@ set_global_output_directory(Output)
 
 scan_all_third_party_targets(3rdParty)
 
+# Setup LLDB visualizers for debug builds
+setup_lldb_visualizers_global()
+
 add_subdirectory(Source)
 
 if (BUILD_TESTS)

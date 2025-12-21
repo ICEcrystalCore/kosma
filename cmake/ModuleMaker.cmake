@@ -110,7 +110,7 @@ function(_gen_api_header MODULE_NAME)
     set(_MOCK_API_NAME "${MODULE_NAME}API.h")
 
     configure_file(
-            ${CMAKE_SOURCE_DIR}/BuildConfigs/APITemplate.h.in
+            ${CMAKE_SOURCE_DIR}/Configs/Build/APITemplate.h.in
             ${MOCK_FOLDER}/${_MOCK_API_NAME}
             @ONLY
     )
