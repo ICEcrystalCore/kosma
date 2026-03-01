@@ -32,14 +32,21 @@ public:
     UniquePtr(UniquePtr&& other) noexcept
         : m_ptr(other.m_ptr)
     {
-        other.m_ptr = nullptr;
+        other.m_ptr.second() = nullptr;
+    }
+
+    // Converting move constructor: allows UniquePtr<Derived> → UniquePtr<Base>.
+    template<typename U, typename D, std::enable_if_t<std::is_convertible_v<U*, T*>, int> = 0>
+    UniquePtr(UniquePtr<U, D>&& other) noexcept
+        : m_ptr(Deleter(), static_cast<T*>(other.release()))
+    {
     }
 
     UniquePtr& operator=(UniquePtr&& other) noexcept
     {
         if (this != &other) {
-            reset(other.m_ptr.first());
-            other.m_ptr = nullptr;
+            reset(other.m_ptr.second());
+            other.m_ptr.second() = nullptr;
         }
         return *this;
     }
@@ -54,12 +61,12 @@ public:
 
     const T* get() const noexcept { return m_ptr.second(); }
 
-    T* get() noexcept { return m_ptr; }
+    T* get() noexcept { return m_ptr.second(); }
 
     T* release() noexcept
     {
-        T* temp = m_ptr;
-        m_ptr = nullptr;
+        T* temp = m_ptr.second();
+        m_ptr.second() = nullptr;
         return temp;
     }
 
@@ -69,7 +76,7 @@ public:
         m_ptr.second() = ptr;
     }
 
-    explicit operator bool() const { return m_ptr != nullptr; }
+    explicit operator bool() const { return m_ptr.second() != nullptr; }
 
 private:
     CompressedPair<Deleter, T*> m_ptr;
