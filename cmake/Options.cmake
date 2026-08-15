@@ -22,6 +22,6 @@ function(update_config)
 endfunction()
 
 function(init_config_directory)
-    get_filename_component(_CONFIG_ROOT "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../Config" ABSOLUTE)
+    get_filename_component(_CONFIG_ROOT "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../configs" ABSOLUTE)
     set(CONFIG_ROOT ${_CONFIG_ROOT} CACHE PATH "Config root directory" FORCE)
 endfunction()

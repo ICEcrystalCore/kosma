@@ -1,0 +1,37 @@
+---
+description: Git commits follow Angular conventional commits, in English
+alwaysApply: true
+---
+
+# Commit messages
+
+Use [Angular commit convention](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit). Write the entire message in English.
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+- Header is required. Scope is optional.
+- Subject: imperative present tense (`add` not `added` / `adds`), no leading capital, no trailing period.
+- Body: why, not what; wrap at 100 characters.
+- Footer: `BREAKING CHANGE:` and issue references (`Closes #123`).
+- No `Co-Authored-By`, `Signed-off-by`, "Generated with" / "Made with", model or agent names, or other trailers.
+
+Types: `feat` `fix` `docs` `style` `refactor` `perf` `test` `build` `ci`
+
+```
+feat(module): add static module registry
+fix(string): reject empty views in find
+build(cmake): map RelWithDebInfo to Conan Release
+refactor: lowercase source directories
+```
+
+```
+添加模块注册
+Fix String bug.
+feat(module): Add Static Registry.
+```

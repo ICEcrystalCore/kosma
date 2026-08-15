@@ -53,4 +53,9 @@ function(run_conan_install)
 
     set(CMAKE_MODULE_PATH ${CONAN_BUILD_DIR} ${CMAKE_MODULE_PATH} CACHE PATH "CMake module path updated by Conan" FORCE)
     set(CMAKE_PREFIX_PATH ${CONAN_BUILD_DIR} ${CMAKE_PREFIX_PATH} CACHE PATH "CMake prefix path updated by Conan" FORCE)
+
+    # Map RelWithDebInfo/MinSizeRel to the Conan-generated Release config
+    # so that $<$<CONFIG:Release>:...> generator expressions match correctly
+    set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release "" CACHE STRING "" FORCE)
+    set(CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL Release "" CACHE STRING "" FORCE)
 endfunction()

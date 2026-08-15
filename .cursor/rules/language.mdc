@@ -1,0 +1,27 @@
+---
+description: English for commits, comments, and public docs; Chinese for design docs
+alwaysApply: true
+---
+
+# Project language
+
+Native Chinese is fine for thinking. Split by audience so nothing is bilingual-and-stale.
+
+| Surface | Language |
+|---|---|
+| Git commits | English (Angular; see `commit-messages` rule) |
+| Code comments | English, why only; skip what the name already says |
+| `README`, public API docs | English |
+| `docs/` design, RFCs, construction notes | Chinese |
+| PR title | English, same as the commit header |
+| PR / issue discussion | Chinese until non-Chinese collaborators exist |
+
+Do not keep parallel EN/ZH copies of the same doc. Translate a design doc to English only when it becomes public or a collaborator cannot read Chinese.
+
+```
+// Load dependencies before startup so shutdown can run in reverse.
+```
+
+```
+// 先加载依赖再 startup
+```

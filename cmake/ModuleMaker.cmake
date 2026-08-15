@@ -1,10 +1,10 @@
 function(make_module MODULE_NAME)
-    _find_folder(Public PUBLIC_DIR)
+    _find_folder(public PUBLIC_DIR)
 
-    _find_folder(Private PRIVATE_DIR)
+    _find_folder(private PRIVATE_DIR)
 
     if (NOT PUBLIC_DIR)
-        message(FATAL_ERROR "Public folder not found")
+        message(FATAL_ERROR "public folder not found")
     endif ()
 
     if (NOT PRIVATE_DIR)
@@ -110,7 +110,7 @@ function(_gen_api_header MODULE_NAME)
     set(_MOCK_API_NAME "${MODULE_NAME}API.h")
 
     configure_file(
-            ${CMAKE_SOURCE_DIR}/Configs/Build/APITemplate.h.in
+            ${CMAKE_SOURCE_DIR}/configs/build/APITemplate.h.in
             ${MOCK_FOLDER}/${_MOCK_API_NAME}
             @ONLY
     )

@@ -13,7 +13,7 @@ function(setup_lldb_visualizers TARGET_NAME)
     
     # Get the debugger scripts directory
     get_filename_component(DEBUGGER_SCRIPTS_DIR 
-        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../Configs/Debugger" 
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../configs/debugger" 
         ABSOLUTE
     )
     
@@ -81,7 +81,7 @@ endfunction()
 function(setup_lldb_visualizers_global)
     # Get the debugger scripts directory
     get_filename_component(DEBUGGER_SCRIPTS_DIR 
-        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../Configs/Debugger" 
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../configs/debugger" 
         ABSOLUTE
     )
     

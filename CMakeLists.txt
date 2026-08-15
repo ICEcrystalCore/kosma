@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 option(BUILD_TESTS "Build tests" ON)
 
-include(Cmake/LoadCMakeScripts.cmake)
+include(cmake/LoadCMakeScripts.cmake)
 
 load_all_cmake_scripts()
 
@@ -20,13 +20,13 @@ update_config()
 
 set_global_output_directory(Output)
 
-scan_all_third_party_targets(3rdParty)
+scan_all_third_party_targets(third_party)
 
 # Setup LLDB visualizers for debug builds
 setup_lldb_visualizers_global()
 
-add_subdirectory(Source)
+add_subdirectory(source)
 
 if (BUILD_TESTS)
-    add_subdirectory(Tests)
+    add_subdirectory(tests)
 endif ()

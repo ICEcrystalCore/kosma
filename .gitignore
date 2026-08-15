@@ -17,3 +17,6 @@
 
 # conan files
 /.conan
+
+# AI
+/.claude
